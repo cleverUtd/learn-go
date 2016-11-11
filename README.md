@@ -1,6 +1,6 @@
 # learning-go
 
-跟着 [Go 指南](https://tour.go-zh.org/list) 学习go的代码
+根据 [Go 指南](https://tour.go-zh.org/list) 学习go的代码
 
 ### 运行
 
