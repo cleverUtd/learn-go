@@ -1,17 +1,18 @@
 package main
 
-// import "fmt"
 import "demo"
 
+// import "fmt"
+
 func main() {
-	
+
 	// demo.VariableDeclairation()
 	demo.InitVar()
-	
+
 	// demo.Print()
 	// demo.ChangeType()
 	// demo.InferType()
- 
+
 	// demo.Constants()
 
 	// demo.WhileLoop()
@@ -31,7 +32,7 @@ func main() {
 	// demo.Slice()
 	// demo.MakeSlice()
 	// demo.AppendSlice()
-	
+
 	// demo.RangeTest()
 	// demo.RangeTest2()
 
@@ -46,7 +47,6 @@ func main() {
 	// demo.PointerRecv()
 
 	// demo.ImplOfInterface()
-    
 
 	// goroutine.GoSay()
 	// goroutine.Channel()
@@ -55,4 +55,3 @@ func main() {
 	// goroutine.Select()
 	// goroutine.SyncMutex()
 }
-
