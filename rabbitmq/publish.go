@@ -13,7 +13,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-const amqpURI = "amqp://zclau:zclau@192.168.31.146:5672/"
+const amqpURI = "amqp://zclau:zclau@10.0.0.11:5672/"
 
 var (
 	amqpConnection *amqp.Connection
