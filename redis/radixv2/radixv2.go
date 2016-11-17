@@ -1,19 +1,24 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"net/http"
+	"os"
+	"runtime"
+	"runtime/pprof"
+	"strconv"
 	"time"
 
 	"io"
 
 	"log"
 
-	"runtime"
-
 	"github.com/mediocregopher/radix.v2/pool"
 	"github.com/mediocregopher/radix.v2/redis"
+
+	_ "net/http/pprof"
 )
 
 const size = 300
@@ -24,7 +29,7 @@ var (
 )
 
 func init() {
-	p, err := pool.New("tcp", redisURI, 100)
+	p, err := pool.New("tcp", redisURI, size)
 	if err != nil {
 		fmt.Println("error create pool.", err)
 	}
@@ -55,20 +60,61 @@ func randString(n int) string {
 
 func cmdHandler(w http.ResponseWriter, r *http.Request) {
 	// key := randString(10)
-	reply, err := redisDo(redisPool, "GET", "foo")
+	_, err := redisDo(redisPool, "GET", "foo")
 	if err != nil {
 		fmt.Println("redis error.", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprintf(w, reply.String())
 }
 
 func main() {
-	runtime.GOMAXPROCS(8)
-	http.HandleFunc("/redisCmd", cmdHandler)
+	// runtime.GOMAXPROCS(8)
+	flag.Parse()
+
+	numGroutines()
+
+	http.HandleFunc("/redisget", cmdHandler)
 	err := http.ListenAndServe(":9090", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+}
+
+// pprof
+
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+
+func cpuprof() {
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
+}
+
+func memprof() {
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.WriteHeapProfile(f)
+		f.Close()
+		return
+	}
+}
+
+func numGroutines() {
+	go func() {
+		http.HandleFunc("/goroutines", func(w http.ResponseWriter, r *http.Request) {
+			num := strconv.FormatInt(int64(runtime.NumGoroutine()), 10)
+			w.Write([]byte(num))
+		})
+		http.ListenAndServe(":9091", nil)
+	}()
 }
