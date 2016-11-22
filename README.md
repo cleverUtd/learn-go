@@ -6,7 +6,7 @@
 
 主函数在 main/main.go 
 
-### 安装
+### Golang下载与环境搭建
 
 [下载安装](https://golang.org/doc/install)
 
